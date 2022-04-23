@@ -17,7 +17,7 @@ const Formulario = () => {
     const [estudiante, setEstudiante] = useState(objetoEstudiante);
     const [lista, setLista] = useState([]);
     const [modoEdicion, setModoEdicion] = useState(false);
-
+    const [id, setId] = useState('')
     const [error, setError] = useState(null);
 
 
@@ -105,6 +105,17 @@ const Formulario = () => {
 
     }
 
+    const confirmarEliminar = (id) => {
+        let opcion = window.confirm('¿Está seguro que desea eliminar?')
+
+        if (!opcion) {
+        } else {
+
+            eliminar(id);
+        }
+
+    }
+
     const eliminar = async (id) => {
         try {
             const db = firebase.firestore()
@@ -116,55 +127,143 @@ const Formulario = () => {
         }
     }
 
+    const auxEditar = (item) => {
+
+        const objetoEstudiante = {
+            nombre: item.nombre,
+            universidad: item.universidad,
+            carrera: item.carrera,
+            edad: item.edad,
+            sexo: item.sexo,
+            correo: item.correo,
+            telefono: item.telefono,
+        }
+
+        setEstudiante(objetoEstudiante);
+        setModoEdicion(true);
+        setId(item.id);
+
+    }
+
+    const editar = async e => {
+        e.preventDefault()
+
+        if (!estudiante.nombre) {
+            setError('Campo nombre vacío');
+            return
+        }
+
+        if (!estudiante.universidad) {
+            setError('Campo universidad vacío');
+            return
+        }
+
+        if (!estudiante.carrera) {
+            setError('Campo carrera vacío');
+            return
+        }
+
+        if (!estudiante.edad) {
+            setError('Campo edad vacío');
+            return
+        }
+
+        if (!estudiante.sexo) {
+            setError('Campo sexo vacío');
+            return
+        }
+
+        if (!estudiante.correo) {
+            setError('Campo correo vacío');
+            return
+        }
+
+        if (!estudiante.telefono) {
+            setError('Campo teléfono vacío');
+            return
+        }
+
+        try {
+
+
+            const db = firebase.firestore()
+            await db.collection('estudiantes').doc(id).update({
+                ...estudiante
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+
+        setEstudiante(objetoEstudiante);
+        setModoEdicion(false)
+        setError(null)
+
+    }
+
+
+    const cancelar = () => {
+
+        setEstudiante(objetoEstudiante)
+        setModoEdicion(false)
+        setError(null)
+    }
+
     return (
         <div className='container-xxl mt-5'>
             <h1 className='text-center'>TALLER REACT-FIREBASE</h1>
             <hr />
             <div className='row'>
                 <div className="col-8">
-                    <h4 className="text-center">Listado de estudiantes</h4>
-                    <table class="table table-dark">
-                        <thead>
-                            <tr>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Universidad</th>
-                                <th scope="col">Carrera</th>
-                                <th scope="col">Edad</th>
-                                <th scope="col">Sexo</th>
-                                <th scope="col">Correo</th>
-                                <th scope="col">Teléfono</th>
-                                <th scope="col">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                lista.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>{item.nombre}</td>
-                                        <td>{item.universidad}</td>
-                                        <td>{item.carrera}</td>
-                                        <td>{item.edad}</td>
-                                        <td>{item.sexo}</td>
-                                        <td>{item.correo}</td>
-                                        <td>{item.telefono}</td>
-                                        <td>
-                                            <button className='btn btn-danger btn-sm float-end mx-2'
-                                                onClick={() => eliminar(item.id)}>Eliminar
-                                            </button>
-                                            <button className='btn btn-warning btn-sm float-end'>Editar</button>
-                                        </td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
+                    <h4 className="text-center">Listado de estudiantes - Total {lista.length}</h4>
+                    {lista.length < 1 ?
+                        <h2 className='mt-5 text-center'>No hay estudiantes listados aún</h2>
+                        :
+                        <table className="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Universidad</th>
+                                    <th scope="col">Carrera</th>
+                                    <th scope="col">Edad</th>
+                                    <th scope="col">Sexo</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    lista.map((item) => (
+                                        <tr key={item.id}>
+                                            <td>{item.nombre}</td>
+                                            <td>{item.universidad}</td>
+                                            <td>{item.carrera}</td>
+                                            <td>{item.edad}</td>
+                                            <td>{item.sexo}</td>
+                                            <td>{item.correo}</td>
+                                            <td>{item.telefono}</td>
+                                            <td>
+                                                <button className='btn btn-danger btn-sm float-end mx-2'
+                                                    onClick={() => confirmarEliminar(item.id)}>Eliminar
+                                                </button>
+                                                <button className='btn btn-warning btn-sm float-end'
+                                                    onClick={() => auxEditar(item)}>Editar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    }
                 </div>
                 <div className="col-4">
                     <h4 className="text-center">
                         {
                             modoEdicion ? 'Editar estudiante' : 'Agregar estudiante'
                         }</h4>
-                    <form onSubmit={guardarDatos}>
+                    <form onSubmit={modoEdicion ? editar : guardarDatos}>
                         {
                             error ? <span className='text-danger'>{error}</span> : null
                         }
@@ -202,9 +301,30 @@ const Formulario = () => {
                             className='form-select mb-2'
                             onChange={(e) => setEstudiante({ ...estudiante, sexo: e.target.value })}
                         >
-                            <option ></option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
+                            <option value={estudiante.sexo}>{estudiante.sexo}</option>
+
+                            {
+                                !estudiante.sexo
+
+                                    ?
+                                    <>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                    </>
+                                    :
+
+                                    (estudiante.sexo === 'Masculino' ?
+
+                                        <option value="Femenino">Femenino</option>
+
+                                        :
+
+                                        <option value="Masculino">Masculino</option>
+
+
+                                    )
+
+                            }
                         </select>
                         <input
                             className='form-control mb-2'
@@ -229,7 +349,7 @@ const Formulario = () => {
                                 :
                                 (<>
                                     <button className='btn btn-warning btn-block' type='submit'>Editar</button>
-                                    <button className='btn btn-dark btn-block mx-2'>Cancelar</button>
+                                    <button className='btn btn-dark btn-block mx-2' onClick={() => cancelar()}>Cancelar</button>
                                 </>
                                 )
                         }

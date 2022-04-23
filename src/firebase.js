@@ -6,12 +6,12 @@ import 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBtGs_d2b_VLIm3ReWL4RrvrWVr6UXBX9c",
-  authDomain: "taller-react-firebase.firebaseapp.com",
-  projectId: "taller-react-firebase",
-  storageBucket: "taller-react-firebase.appspot.com",
-  messagingSenderId: "324548260784",
-  appId: "1:324548260784:web:2bbb5d0339ca43c69e5c75"
+  apiKey: "AIzaSyDctCB3I140N46a588V_GuDYzL8ZazdzTI",
+  authDomain: "taller-react-firebase-b04d7.firebaseapp.com",
+  projectId: "taller-react-firebase-b04d7",
+  storageBucket: "taller-react-firebase-b04d7.appspot.com",
+  messagingSenderId: "441715962184",
+  appId: "1:441715962184:web:84c9c4c2cd2583bbe2037d"
 };
 
 // Initialize Firebase
