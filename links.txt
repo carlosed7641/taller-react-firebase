@@ -1,0 +1,2 @@
+Amplify: https://main.da6rgc2rm2fcn.amplifyapp.com/
+Netlify: https://zippy-florentine-6d3672.netlify.app/
