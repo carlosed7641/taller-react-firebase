@@ -105,6 +105,17 @@ const Formulario = () => {
 
     }
 
+    const eliminar = async (id) => {
+        try {
+            const db = firebase.firestore()
+            await db.collection('estudiantes').doc(id).delete()
+            const aux = lista.filter(item => item.id !== id)
+            setLista(aux)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <div className='container-xxl mt-5'>
             <h1 className='text-center'>TALLER REACT-FIREBASE</h1>
@@ -137,7 +148,9 @@ const Formulario = () => {
                                         <td>{item.correo}</td>
                                         <td>{item.telefono}</td>
                                         <td>
-                                            <button className='btn btn-danger btn-sm float-end mx-2'>Eliminar</button>
+                                            <button className='btn btn-danger btn-sm float-end mx-2'
+                                                onClick={() => eliminar(item.id)}>Eliminar
+                                            </button>
                                             <button className='btn btn-warning btn-sm float-end'>Editar</button>
                                         </td>
                                     </tr>
